@@ -1,6 +1,6 @@
 Package: rhandsontable
 Title: Interface to the 'Handsontable.js' Library
-Version: 0.1
+Version: 0.2
 Authors@R: c(person("Jonathan", "Owen", email = "jonathanro@gmail.com",
                     role = c("aut", "cre", "cph")),
              person("Jeff", "Allen", role = c("ctb")),
@@ -13,19 +13,21 @@ Authors@R: c(person("Jonathan", "Owen", email = "jonathanro@gmail.com",
              person("Wood", "Tim", role = c("ctb", "cph"), comment = "Moment.js library"),
              person("Chernev", "Iskren", role = c("ctb", "cph"), comment = "Moment.js library"),
              person("Moment.js contributors", role = c("ctb", "cph"), comment = "Moment.js library"),
-             person("Bushell", "David", role = c("ctb", "cph"), comment = "Pikaday.js library"))
+             person("Bushell", "David", role = c("ctb", "cph"), comment = "Pikaday.js library"),
+             person("jQuery Foundation", role = c("ctb", "cph"), comment = "jQuery.js library"),
+             person("Splunk Inc", role = c("ctb", "cph"), comment = "Sparkline.js library"))
 Maintainer: Jonathan Owen <jonathanro@gmail.com>
-Description: An R interface to the Handsontable JavaScript library, which is a
+Description: An R interface to the 'Handsontable' JavaScript library, which is a
   minimalist Excel-like data grid editor.
 License: MIT + file LICENSE
-URL: https://github.com/jrowen/rhandsontable
+URL: http://jrowen.github.io/rhandsontable/
 BugReports: https://github.com/jrowen/rhandsontable/issues
-Imports: jsonlite, htmlwidgets (>= 0.3.3), magrittr
+Imports: jsonlite, htmlwidgets (>= 0.3.3), magrittr, methods
 Suggests: knitr
 Enhances: shiny (>= 0.12)
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2015-06-24 13:51:24 UTC; jrowen
+Packaged: 2015-08-24 23:56:48 UTC; jonathan
 Author: Jonathan Owen [aut, cre, cph],
   Jeff Allen [ctb],
   Yihui Xie [ctb],
@@ -36,6 +38,8 @@ Author: Jonathan Owen [aut, cre, cph],
   Wood Tim [ctb, cph] (Moment.js library),
   Chernev Iskren [ctb, cph] (Moment.js library),
   Moment.js contributors [ctb, cph] (Moment.js library),
-  Bushell David [ctb, cph] (Pikaday.js library)
+  Bushell David [ctb, cph] (Pikaday.js library),
+  jQuery Foundation [ctb, cph] (jQuery.js library),
+  Splunk Inc [ctb, cph] (Sparkline.js library)
 Repository: CRAN
-Date/Publication: 2015-06-24 17:28:36
+Date/Publication: 2015-08-25 08:54:03

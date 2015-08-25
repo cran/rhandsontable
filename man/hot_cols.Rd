@@ -4,14 +4,12 @@
 \alias{hot_cols}
 \title{Handsontable widget}
 \usage{
-hot_cols(hot, columns = NULL, colWidths = NULL, columnSorting = NULL,
+hot_cols(hot, colWidths = NULL, columnSorting = NULL,
   manualColumnMove = NULL, manualColumnResize = NULL,
   fixedColumnsLeft = NULL, ...)
 }
 \arguments{
 \item{hot}{rhandsontable object}
-
-\item{columns}{a list of column settings}
 
 \item{colWidths}{a scalar or numeric vector of column widths}
 
@@ -39,5 +37,8 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 
 rhandsontable(DF) \%>\%
   hot_cols(columnSorting = TRUE)
+}
+\seealso{
+\code{\link{hot_col}}, \code{\link{hot_rows}}, \code{\link{hot_cell}}
 }
 

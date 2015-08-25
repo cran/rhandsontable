@@ -1,4 +1,38 @@
+rhandsontable 0.2
+-------------------------
+
+* Added a project page at http://jrowen.github.io/rhandsontable
+
+* Upgraded to handsontable 0.16.1
+
+* Improved mapping between R classes and handsontable column types.  Numeric columns
+  in R are now mapped to numeric columns in the table, and factors are now
+  mapped as dropdown columns (#30).
+
+* Numeric columns are now formatted as '0' for integers and '0.00' for all other
+  numeric columns.  See http://http://numeraljs.com/ for more details on
+  formatting options.
+
+* Sparkline charts (http://omnipotent.net/jquery.sparkline/) can now be added to the
+  table.  See the project page for examples, and thanks to the sparkline package and
+  Ramnath Vaidyanathan for inspiration.  The sparkline chart width will be
+  set to fit within the specified column width.  The feature is still evolving, so
+  please pass along feedback.
+
+* Display NA values as blank cells in the table.  This requires changing colums with NA
+  values to character when displaying in handsontable and may require special handling
+  for Date and factor columns.  See the examples on the project page for more details.
+  Thanks to Melanie Bacou for the suggestion.
+
+* Added stretchH parameter to hot_table.
+
+* Fixed a bug where the table was not updated when resized.
+
+* Fixed a bug with row indices when sorting rows (#34)
+
+* Set overflow: auto and specified a default height = 400 in shiny (#21).
+
 rhandsontable 0.1
 -------------------------
 
-* Initial version
+* Initial version.

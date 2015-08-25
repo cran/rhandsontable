@@ -2,6 +2,7 @@
 #'
 #' Create a \href{http://handsontable.com}{Handsontable.js} widget.
 #'
+#' For full documentation on the package, visit \url{http://jrowen.github.io/rhandsontable/}
 #' @param data a \code{data.table}, \code{data.frame} or \code{matrix}
 #' @param colHeaders a vector of column names. If missing \code{colnames}
 #'  will be used. Setting to \code{NULL} will omit.
@@ -23,6 +24,7 @@
 #'                 stringsAsFactors = FALSE)
 #'
 #' rhandsontable(DF, rowHeaders = NULL)
+#' @seealso \code{\link{hot_table}}, \code{\link{hot_cols}}, \code{\link{hot_rows}}, \code{\link{hot_cell}}
 #' @export
 rhandsontable <- function(data, colHeaders, rowHeaders, useTypes = TRUE,
                           readOnly = NULL, selectCallback = FALSE,
@@ -42,6 +44,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, useTypes = TRUE,
     rColClasses = class(data[1, 1])
   } else {
     rColClasses = lapply(data, class)
+    rColClasses[grepl("factor", rColClasses)] = "factor"
   }
 
   if(useTypes) {
@@ -55,9 +58,31 @@ rhandsontable <- function(data, colHeaders, rowHeaders, useTypes = TRUE,
         data[, i] = as.character(data[, i], format = DATE_FORMAT)
     }
 
-    cols = lapply(col_typs, function(type) {
-      res = list(type = type)
+    cols = lapply(seq_along(col_typs), function(i) {
+      type = col_typs[i]
+      if (type == "factor") {
+#         data_fact = data.frame(level = levels(data[, i]),
+#                                label = labels(data[, i]))
+        res = list(type = "dropdown",
+                   source = levels(data[, i]),
+                   allowInvalid = FALSE
+#                    handsontable = list(
+#                      colHeaders = FALSE, #c("Label", "Level"),
+#                      data = levels(data[, i]) #jsonlite::toJSON(data_fact, na = "string",
+#                                               #rownames = FALSE)
+#                    )
+        )
+      } else if (type == "numeric") {
+        res = list(type = "numeric",
+                   format = "0.00")
+      } else if (type == "integer") {
+        res = list(type = "numeric",
+                   format = "0")
+      } else {
+        res = list(type = type)
+      }
       res$readOnly = readOnly
+      res$renderer = JS("customRenderer")
       res
     })
   }
@@ -83,8 +108,8 @@ rhandsontable <- function(data, colHeaders, rowHeaders, useTypes = TRUE,
     package = 'rhandsontable',
     sizingPolicy = htmlwidgets::sizingPolicy(
       padding = 5,
-      defaultHeight = 0,
-      defaultWidth = 0
+      defaultHeight = "100%",
+      defaultWidth = "100%"
     )
   )
 
@@ -103,7 +128,6 @@ rhandsontable <- function(data, colHeaders, rowHeaders, useTypes = TRUE,
 #' Configure multiple columns.
 #'
 #' @param hot rhandsontable object
-#' @param columns a list of column settings
 #' @param colWidths a scalar or numeric vector of column widths
 #' @param columnSorting logical enabling row sorting. Sorting only alters the
 #'  table presentation and the original dataset row order is maintained.
@@ -121,13 +145,11 @@ rhandsontable <- function(data, colHeaders, rowHeaders, useTypes = TRUE,
 #'
 #' rhandsontable(DF) %>%
 #'   hot_cols(columnSorting = TRUE)
+#' @seealso \code{\link{hot_col}}, \code{\link{hot_rows}}, \code{\link{hot_cell}}
 #' @export
-hot_cols = function(hot, columns = NULL, colWidths = NULL,
-                    columnSorting = NULL, manualColumnMove = NULL,
-                    manualColumnResize = NULL, fixedColumnsLeft = NULL, ...) {
-  # overwrite original settings
-  if (!is.null(columns)) hot$x$columns = columns
-
+hot_cols = function(hot, colWidths = NULL, columnSorting = NULL,
+                    manualColumnMove = NULL, manualColumnResize = NULL,
+                    fixedColumnsLeft = NULL, ...) {
   if (!is.null(colWidths)) hot$x$colWidths = colWidths
 
   if (!is.null(columnSorting)) hot$x$columnSorting = columnSorting
@@ -147,13 +169,14 @@ hot_cols = function(hot, columns = NULL, colWidths = NULL,
 #' Configure single column.
 #'
 #' @param hot rhandsontable object
-#' @param col numeric column index
+#' @param col vector of column names or indices
 #' @param type character specify the data type. Options include:
 #'  numeric, date, checkbox, select, dropdown, autocomplete, password,
 #'  and handsontable (not implemented yet)
 #' @param format characer specifying column format. See Cell Types at
 #'  \href{http://handsontable.com}{Handsontable.js} for the formatting
-#'  options for each data type
+#'  options for each data type. Numeric columns are formatted using
+#'  \href{http://numeraljs.com}{Numeral.js}.
 #' @param source a vector of choices for select, dropdown and autocomplete
 #'  column types
 #' @param strict logical specifying whether values not in the \code{source}
@@ -181,6 +204,7 @@ hot_cols = function(hot, columns = NULL, colWidths = NULL,
 #'   hot_col(col = "big", type = "dropdown", source = LETTERS) %>%
 #'   hot_col(col = "small", type = "autocomplete", source = letters,
 #'           strict = FALSE)
+#' @seealso \code{\link{hot_cols}}, \code{\link{hot_rows}}, \code{\link{hot_cell}}
 #' @export
 hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
                    strict = NULL,
@@ -197,21 +221,23 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
     })
   }
 
-  if (is.character(col)) col = which(hot$x$colHeaders == col)
+  for (i in col) {
+    if (is.character(i)) i = which(hot$x$colHeaders == i)
 
-  if (!is.null(type)) cols[[col]]$type = type
-  if (!is.null(format)) cols[[col]]$format = format
-  if (!is.null(source)) cols[[col]]$source = source
-  if (!is.null(strict)) cols[[col]]$strict = strict
-  if (!is.null(readOnly)) cols[[col]]$readOnly = readOnly
+    if (!is.null(type)) cols[[i]]$type = type
+    if (!is.null(format)) cols[[i]]$format = format
+    if (!is.null(source)) cols[[i]]$source = source
+    if (!is.null(strict)) cols[[i]]$strict = strict
+    if (!is.null(readOnly)) cols[[i]]$readOnly = readOnly
 
-  if (!is.null(validator)) cols[[col]]$validator = JS(validator)
-  if (!is.null(allowInvalid)) cols[[col]]$allowInvalid = allowInvalid
-  if (!is.null(renderer)) cols[[col]]$renderer = JS(renderer)
+    if (!is.null(validator)) cols[[i]]$validator = JS(validator)
+    if (!is.null(allowInvalid)) cols[[i]]$allowInvalid = allowInvalid
+    if (!is.null(renderer)) cols[[i]]$renderer = JS(renderer)
 
-  className = c(halign, valign)
-  if (!is.null(className)) {
-    cols[[col]]$className = className
+    className = c(halign, valign)
+    if (!is.null(className)) {
+      cols[[i]]$className = className
+    }
   }
 
   hot$x$columns = cols
@@ -223,7 +249,7 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
 #' Add numeric validation to a column
 #'
 #' @param hot rhandsontable object
-#' @param cols numeric vector column index
+#' @param cols vector of column names or indices
 #' @param min minimum value to accept
 #' @param max maximum value to accept
 #' @param choices a vector of acceptable numeric choices. It will be evaluated
@@ -241,6 +267,7 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
 #'
 #' rhandsontable(MAT * 10) %>%
 #'   hot_validate_numeric(col = 1, choices = c(10, 20, 40))
+#' @seealso \code{\link{hot_validate_character}}
 #' @export
 hot_validate_numeric = function(hot, cols, min = NULL, max = NULL,
                                 choices = NULL, exclude = NULL,
@@ -298,7 +325,7 @@ hot_validate_numeric = function(hot, cols, min = NULL, max = NULL,
 #' Add numeric validation to a column
 #'
 #' @param hot rhandsontable object
-#' @param cols numeric vector column index
+#' @param cols vector of column names or indices
 #' @param choices a vector of acceptable numeric choices. It will be evaluated
 #'  after min and max if specified.
 #' @param allowInvalid logical specifying whether invalid data will be
@@ -312,6 +339,7 @@ hot_validate_numeric = function(hot, cols, min = NULL, max = NULL,
 #'
 #' rhandsontable(DF) %>%
 #'   hot_validate_character(col = "big", choices = LETTERS[1:10])
+#' @seealso \code{\link{hot_validate_numeric}}
 #' @export
 hot_validate_character = function(hot, cols, choices,
                                   allowInvalid = FALSE) {
@@ -354,6 +382,7 @@ hot_validate_character = function(hot, cols, choices,
 #' rhandsontable(MAT, width = 300, height = 150) %>%
 #' hot_cols(colWidths = 100, fixedColumnsLeft = 1) %>%
 #'   hot_rows(rowHeights = 50, fixedRowsTop = 1)
+#' @seealso \code{\link{hot_cols}}, \code{\link{hot_cell}}
 #' @export
 hot_rows = function(hot, rowHeights = NULL, fixedRowsTop = NULL) {
   if (!is.null(rowHeights)) hot$x$rowHeights = rowHeights
@@ -379,6 +408,7 @@ hot_rows = function(hot, rowHeights = NULL, fixedRowsTop = NULL) {
 #'
 #' rhandsontable(DF, readOnly = TRUE) %>%
 #'   hot_cell(1, 1, "Test comment")
+#' @seealso \code{\link{hot_cols}}, \code{\link{hot_rows}}
 #' @export
 hot_cell = function(hot, row, col, comment = NULL) {
   cell = list(row = row, col = col, comment = comment)
@@ -398,8 +428,12 @@ hot_cell = function(hot, row, col, comment = NULL) {
 #'
 #' @param hot rhandsontable object
 #' @param contextMenu logical enabling the right-click menu
+#' @param stretchH character describing column stretching. Options are 'all', 'right',
+#'  and 'none'. See \href{http://docs.handsontable.com/0.15.1/demo-stretching.html}{Column stretching} for details.
 #' @param allowRowEdit logical enabling right-click row options
 #' @param allowColEdit logical enabling right-click column options
+#' @param resizeOnRowEdit logical resize table when add/removing rows
+#' @param resizeOnColEdit logical resize table when add/removing rows
 #' @param customBorders json object. See
 #'  \href{http://handsontable.com/demo/custom_borders.html}{Custom borders} for details.
 #' @param groups json object. See
@@ -425,14 +459,17 @@ hot_cell = function(hot, row, col, comment = NULL) {
 #' rhandsontable(DF) %>%
 #' hot_table(highlightCol = TRUE, highlightRow = TRUE,
 #'           allowRowEdit = FALSE, allowColEdit = FALSE)
+#' @seealso \code{\link{rhandsontable}}
 #' @export
-hot_table = function(hot, contextMenu = TRUE,
+hot_table = function(hot, contextMenu = TRUE, stretchH = "none",
                      allowRowEdit = TRUE, allowColEdit = TRUE,
+                     resizeOnRowEdit = TRUE, resizeOnColEdit = TRUE,
                      customBorders = NULL, groups = NULL, highlightRow = NULL,
                      highlightCol = NULL, comments = NULL,
                      exportToCsv = NULL, csvFileName = "download.csv",
                      ...) {
   if (!is.null(contextMenu)) hot$x$contextMenu = contextMenu
+  if (!is.null(stretchH)) hot$x$stretchH = stretchH
   if (!is.null(allowRowEdit)) hot$x$allowRowEdit = allowRowEdit
   if (!is.null(allowColEdit)) hot$x$allowColEdit = allowColEdit
   if (!is.null(customBorders)) hot$x$customBorders = customBorders
@@ -517,11 +554,11 @@ renderer_heatmap = function(color_scale) {
 #' Shiny bindings for rhandsontable
 #'
 #' @param outputId output variable to read from
-#' @param width,height Must be a valid CSS unit (like \code{"100\%"},
-#'  \code{"400px"}, \code{"auto"}) or a number, which will be coerced to a
-#'  string and have \code{"px"} appended.
+#' @param width,height Must be a valid CSS unit in pixels
+#'  or a number, which will be coerced to a string and have \code{"px"} appended.
+#' @seealso \code{\link{renderRHandsontable}}
 #' @export
-rHandsontableOutput <- function(outputId, width = NA, height = NA){
+rHandsontableOutput <- function(outputId, width = "100%", height = "100%"){
   htmlwidgets::shinyWidgetOutput(outputId, 'rhandsontable', width, height,
                                  package = 'rhandsontable')
 }
@@ -534,6 +571,7 @@ rHandsontableOutput <- function(outputId, width = NA, height = NA){
 #' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'  is useful if you want to save an expression in a variable.
+#' @seealso \code{\link{rHandsontableOutput}}, \code{\link{hot_to_r}}
 #' @export
 renderRHandsontable <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) } # force quoted
@@ -546,6 +584,7 @@ renderRHandsontable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #'  to convert the input json to an R dataset.
 #'
 #' @param ... passed to \code{rhandsontable:::toR}
+#' @seealso \code{\link{rHandsontableOutput}}
 #' @export
 hot_to_r = function(...) {
   do.call(toR, ...)

@@ -79,7 +79,7 @@ HTMLWidgets.widget({
         }
       },
       items: menu_items
-    }
+    };
 
     if (instance.hot) { // update existing instance
 
@@ -98,6 +98,8 @@ HTMLWidgets.widget({
     instance.hot.updateSettings({ width: width,
                                   height: height
     });
+    instance.hot.render();
+
   },
 
   afterChangeCallback: function(x) {
@@ -105,9 +107,15 @@ HTMLWidgets.widget({
     x.afterChange = function(changes, source) {
 
       if (HTMLWidgets.shinyMode && changes) {
+        if (this.sortIndex && this.sortIndex.length !== 0) {
+          c = [this.sortIndex[changes[0][0]][0], changes.slice(1, 1 + 3)];
+        } else {
+          c = changes;
+        }
+
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
-          changes: { event: "afterChange", changes: changes },
+          changes: { event: "afterChange", changes: c },
           params: hotParams[this.rootElement.id]
         });
       }
@@ -120,6 +128,11 @@ HTMLWidgets.widget({
     x.afterSelectionEnd = function(r, c, r2, c2) {
 
       if (HTMLWidgets.shinyMode) {
+        if (this.sortIndex && this.sortIndex.length !== 0) {
+          r = this.sortIndex[r][0];
+          r2 = this.sortIndex[r2][0];
+        }
+
         Shiny.onInputChange(this.rootElement.id + "_select", {
           data: this.getData(),
           select: { r: r, c: c, r2: r2, c2: c2},
@@ -134,6 +147,11 @@ HTMLWidgets.widget({
 
     x.afterCreateRow = function(ind, ct) {
 
+      if (this.params.resizeOnRowEdit) {
+        this.updateSettings({ height: $('.wtHider').height() });
+        this.render();
+      }
+
       if (HTMLWidgets.shinyMode)
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
@@ -143,6 +161,11 @@ HTMLWidgets.widget({
     };
 
     x.afterRemoveRow = function(ind, ct) {
+
+      if (this.params.resizeOnRowEdit) {
+        this.updateSettings({ height: $('.wtHider').height() });
+        this.render();
+      }
 
       if (HTMLWidgets.shinyMode)
         Shiny.onInputChange(this.rootElement.id, {
@@ -154,6 +177,11 @@ HTMLWidgets.widget({
 
     x.afterCreateCol = function(ind, ct) {
 
+      if (this.params.resizeOnColEdit) {
+        this.updateSettings({ width: $('.wtHider').width() });
+        this.render();
+      }
+
       if (HTMLWidgets.shinyMode)
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
@@ -163,6 +191,11 @@ HTMLWidgets.widget({
     };
 
     x.afterRemoveCol = function(ind, ct) {
+
+      if (this.params.resizeOnColEdit) {
+        this.updateSettings({ width: $('.wtHider').width() });
+        this.render();
+      }
 
       if (HTMLWidgets.shinyMode)
         Shiny.onInputChange(this.rootElement.id, {
@@ -222,12 +255,12 @@ function csvString(instance) {
   for (var i = 0; i < instance.countRows(); i++) {
       var row = [];
       for (var h in headers) {
-          var prop = instance.colToProp(h)
-          var value = instance.getDataAtRowProp(i, prop)
-          row.push(value)
+          var prop = instance.colToProp(h);
+          var value = instance.getDataAtRowProp(i, prop);
+          row.push(value);
       }
 
-      csv += row.join(",")
+      csv += row.join(",");
       csv += "\n";
   }
 
@@ -236,13 +269,81 @@ function csvString(instance) {
 
 function csvDownload(instance, filename) {
 
-  var csv = csvString(instance)
+  var csv = csvString(instance);
 
   var link = document.createElement("a");
-  link.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(csv));
+  link.setAttribute("href", "data:text/plain;charset=utf-8," +
+    encodeURIComponent(csv));
   link.setAttribute("download", filename);
 
-  document.body.appendChild(link)
+  document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link)
+  document.body.removeChild(link);
+}
+
+function customRenderer(instance, TD, row, col, prop, value, cellProperties) {
+  if (value === 'NA') {
+    value = '';
+    Handsontable.renderers.getRenderer('text')(instance, TD, row, col, prop, value, cellProperties);
+  } else {
+    if (['date', 'handsontable', 'dropdown'].indexOf(cellProperties.type) > -1) {
+      type = 'autocomplete';
+    } else {
+      type = cellProperties.type;
+    }
+    Handsontable.renderers.getRenderer(type)(instance, TD, row, col, prop, value, cellProperties);
+  }
+}
+
+function renderSparkline(instance, td, row, col, prop, value, cellProperties) {
+  try {
+    val = JSON.parse(value);
+
+    nm = 'sparklines_r' + row + '_c' + col;
+    td.innerHTML = '<span class=\"' + nm + '\"></span>';
+
+    // adjust for cell padding
+    if (val.options && val.options.type &&
+      ['bar', 'tristate'].indexOf(val.options.type[0]) > -1) {
+      val.options.barSpacing = 1;
+      val.options.barWidth = Math.max(1, Math.round((instance.getColWidth(col) - 8 - (val.values.length - 1)) / val.values.length));
+    } else {
+      if (!val.options) {
+        val.options = {};
+      }
+      val.options.width = (instance.getColWidth(col) - 8) + "px";
+    }
+
+    $('.' + nm).sparkline(val.values, val.options);
+  } catch(err) {
+    td.innerHTML = '';
+  }
+
+  return td;
+}
+
+// http://docs.handsontable.com/0.16.1/demo-custom-renderers.html
+function strip_tags(input, allowed) {
+  var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
+    commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+
+  // making sure the allowed arg is a string containing only tags in lowercase (<a><b><c>)
+  allowed = (((allowed || "") + "").toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
+
+  return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
+    return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+  });
+}
+
+function safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
+  var escaped = Handsontable.helper.stringify(value);
+  if (instance.getSettings().allowedTags) {
+    tags = instance.getSettings().allowedTags
+  } else {
+    tags = '<em><b><strong><a><big>'
+  }
+  escaped = strip_tags(escaped, tags); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+  td.innerHTML = escaped;
+
+  return td;
 }
