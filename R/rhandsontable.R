@@ -95,6 +95,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
       }
       res$readOnly = readOnly
       res$renderer = JS("customRenderer")
+      res$default = NA
       res
     })
   }
@@ -103,6 +104,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
     data = jsonlite::toJSON(data, na = "string", rownames = FALSE),
     rClass = rClass,
     rColClasses = rColClasses,
+    rColnames = colnames(data),
     selectCallback = selectCallback,
     colHeaders = colHeaders,
     rowHeaders = rowHeaders,
@@ -151,9 +153,9 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
 #' @param hot rhandsontable object
 #' @param contextMenu logical enabling the right-click menu
 #' @param stretchH character describing column stretching. Options are 'all', 'right',
-#'  and 'none'. See \href{http://docs.handsontable.com/0.15.1/demo-stretching.html}{Column stretching} for details.
+#'  and 'none'. See \href{http://docs.handsontable.com/0.16.1/demo-stretching.html}{Column stretching} for details.
 #' @param customBorders json object. See
-#'  \href{http://handsontable.com/demo/custom_borders.html}{Custom borders} for details.
+#'  \href{http://docs.handsontable.com/0.16.1/demo-custom-borders.html}{Custom borders} for details.
 #' @param groups json object. See
 #'  \href{http://docs.handsontable.com/0.16.1/demo-grouping-and-ungrouping.html}{Grouping & ungrouping of rows and columns} for details.
 #' @param highlightRow logical enabling row highlighting for the selected
@@ -381,6 +383,7 @@ hot_cols = function(hot, colWidths = NULL, columnSorting = NULL,
 #'  Ctrl + C
 #' @param dateFormat character defining the date format. See
 #'  {https://github.com/moment/moment}{Moment.js} for details.
+#' @param default default column value for new rows (NA if not specified; shiny only)
 #' @param ... passed to handsontable
 #' @examples
 #' library(rhandsontable)
@@ -398,7 +401,8 @@ hot_cols = function(hot, colWidths = NULL, columnSorting = NULL,
 hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
                    strict = NULL, readOnly = NULL, validator = NULL,
                    allowInvalid = NULL, halign = NULL, valign = NULL,
-                   renderer = NULL, copyable = NULL, dateFormat = NULL, ...) {
+                   renderer = NULL, copyable = NULL, dateFormat = NULL,
+                   default = NULL, ...) {
   cols = hot$x$columns
   if (is.null(cols)) {
     # create a columns list
@@ -419,6 +423,7 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
     if (!is.null(strict)) cols[[i]]$strict = strict
     if (!is.null(readOnly)) cols[[i]]$readOnly = readOnly
     if (!is.null(copyable)) cols[[i]]$copyable = copyable
+    if (!is.null(default)) cols[[i]]$default = default
 
     if (!is.null(validator)) cols[[i]]$validator = JS(validator)
     if (!is.null(allowInvalid)) cols[[i]]$allowInvalid = allowInvalid
@@ -503,7 +508,7 @@ hot_cell = function(hot, row, col, comment = NULL) {
 #' @param max maximum value to accept
 #' @param choices a vector of acceptable numeric choices. It will be evaluated
 #'  after min and max if specified.
-#' @param exclude a vector or unacceptable numeric values
+#' @param exclude a vector of unacceptable numeric values
 #' @param allowInvalid logical specifying whether invalid data will be
 #'  accepted. Invalid data cells will be color red.
 #' @examples
@@ -530,26 +535,26 @@ hot_validate_numeric = function(hot, cols, min = NULL, max = NULL,
            %min
            %max
            %choices
-           callback(true);
+           return callback(true);
          }, 500)
        }"
 
   if (!is.null(exclude))
     ex_str = paste0("if ([",
                     paste0(paste0("'", exclude, "'"), collapse = ","),
-                    "].indexOf(value) > -1) { callback(false); }")
+                    "].indexOf(value) > -1) { return callback(false); }")
   else
     ex_str = ""
   f = gsub("%exclude", ex_str, f)
 
   if (!is.null(min))
-    min_str = paste0("if (value < ", min, ") { callback(false); }")
+    min_str = paste0("if (value < ", min, ") { return callback(false); }")
   else
     min_str = ""
   f = gsub("%min", min_str, f)
 
   if (!is.null(max))
-    max_str = paste0("if (value > ", max, ") { callback(false); }")
+    max_str = paste0("if (value > ", max, ") { return callback(false); }")
   else
     max_str = ""
   f = gsub("%max", max_str, f)
@@ -557,7 +562,7 @@ hot_validate_numeric = function(hot, cols, min = NULL, max = NULL,
   if (!is.null(choices))
     chcs_str = paste0("if ([",
                       paste0(paste0("'", choices, "'"), collapse = ","),
-                      "].indexOf(value) == -1) { callback(false); }")
+                      "].indexOf(value) == -1) { return callback(false); }")
   else
     chcs_str = ""
   f = gsub("%choices", chcs_str, f)
@@ -595,16 +600,16 @@ hot_validate_character = function(hot, cols, choices,
   f = "function (value, callback) {
          setTimeout(function() {
            if (typeof(value) != 'string') {
-             callback(false);
+             return callback(false);
            }
            %choices
-           callback(false);
+           return callback(false);
          }, 500)
        }"
 
   ch_str = paste0("if ([",
                   paste0(paste0("'", choices, "'"), collapse = ","),
-                  "].indexOf(value) > -1) { callback(true); }")
+                  "].indexOf(value) > -1) { return callback(true); }")
   f = gsub("%choices", ch_str, f)
 
   for (x in cols)
@@ -617,7 +622,7 @@ hot_validate_character = function(hot, cols, choices,
 #' Handsontable widget
 #'
 #' Add heatmap to table.  See
-#' \href{http://handsontable.com/demo/heatmaps.html}{Heatmaps for values in a column}
+#' \href{http://docs.handsontable.com/0.16.1/demo-chromajs.html}{Heatmaps for values in a column}
 #' for details.
 #'
 #' @param hot rhandsontable object
@@ -676,7 +681,7 @@ renderer_heatmap = function(color_scale) {
 #' Shiny bindings for rhandsontable
 #'
 #' @param outputId output variable to read from
-#' @param width,height Must be a valid CSS unit in pixels
+#' @param width,height must be a valid CSS unit in pixels
 #'  or a number, which will be coerced to a string and have \code{"px"} appended.
 #' @seealso \code{\link{renderRHandsontable}}
 #' @export
@@ -689,9 +694,9 @@ rHandsontableOutput <- function(outputId, width = "100%", height = "100%"){
 #'
 #' Shiny bindings for rhandsontable
 #'
-#' @param expr An expression that generates threejs graphics.
-#' @param env The environment in which to evaluate \code{expr}.
-#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#' @param expr an expression that generates an rhandsontable.
+#' @param env the environment in which to evaluate \code{expr}.
+#' @param quoted is \code{expr} a quoted expression (with \code{quote()})? This
 #'  is useful if you want to save an expression in a variable.
 #' @seealso \code{\link{rHandsontableOutput}}, \code{\link{hot_to_r}}
 #' @export

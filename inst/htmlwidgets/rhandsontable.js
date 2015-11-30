@@ -15,7 +15,15 @@ HTMLWidgets.widget({
   renderValue: function(el, x, instance) {
 
     // convert json to array
-    x.data = toArray(x.data);
+    if (x.data[0].constructor === Array) {
+      x.data = x.data;
+    } else {
+      x.data = toArray(x.data.map(function(d) {
+        return x.rColnames.map(function(ky) {
+          return d[ky];
+        });
+      }));
+    }
 
     x.afterLoadData = this.updateHeatmap;
     x.beforeChangeRender = this.updateHeatmap;
@@ -114,12 +122,18 @@ HTMLWidgets.widget({
 
     x.afterCreateRow = function(ind, ct) {
 
-      if (HTMLWidgets.shinyMode)
+      if (HTMLWidgets.shinyMode) {
+        
+        for(var i = 0, colCount = this.countCols(); i < colCount ; i++) {
+          this.setDataAtCell(ind, i, this.params.columns[i].default);
+        }
+
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
           changes: { event: "afterCreateRow", ind: ind, ct: ct },
           params: this.params
         });
+      }
     };
 
     x.afterRemoveRow = function(ind, ct) {
