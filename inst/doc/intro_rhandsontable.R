@@ -2,9 +2,10 @@
 library(rhandsontable)
 library(knitr)
 
-opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE)
+opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE,
+              fig.width=7, fig.height=3)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(integer = 1:10,
                    numeric = rnorm(10),
                    logical = rep(TRUE, 10), 
@@ -16,10 +17,10 @@ DF = data.frame(integer = 1:10,
                    date = seq(from = Sys.Date(), by = "days", length.out = 10),
                    stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 600, height = 300) %>%
   hot_col("factor_allow", allowInvalid = TRUE)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF_na = data.frame(integer = c(NA, 2:10), 
                    logical = c(NA, rep(TRUE, 9)), 
                    character = c(NA, LETTERS[1:9]),
@@ -32,30 +33,30 @@ DF_na$factor_ch = as.character(DF_na$factor)
 DF_na$date_ch = c(NA, as.character(seq(from = Sys.Date(), by = "days", 
                                        length.out = 9)))
 
-rhandsontable(DF_na)
+rhandsontable(DF_na, width = 550, height = 300)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
 # try updating big to a value not in the dropdown
-rhandsontable(DF, rowHeaders = NULL) %>%
+rhandsontable(DF, rowHeaders = NULL, width = 550, height = 300) %>%
   hot_col(col = "big", type = "dropdown", source = LETTERS) %>%
   hot_col(col = "small", type = "autocomplete", source = letters,
           strict = FALSE)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_col("small", "password")
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -68,7 +69,7 @@ DF$chart = c(sapply(1:5,
                     function(x) jsonlite::toJSON(list(values=rnorm(10),
                                                       options = list(type = "line")))))
 
-rhandsontable(DF, rowHeaders = NULL) %>%
+rhandsontable(DF, rowHeaders = NULL, width = 550, height = 300) %>%
   hot_col("chart", renderer = htmlwidgets::JS("renderSparkline"))
 
 ## ----fig.height = 5, fig.width = 8---------------------------------------
@@ -97,7 +98,7 @@ DF = data.frame(
 )
 
 rhandsontable(DF, allowedTags = "<em><b><strong><a><big>", 
-              width = 800, height = 500, rowHeaders = FALSE) %>%
+              width = 800, height = 450, rowHeaders = FALSE) %>%
   hot_cols(colWidths = c(200, 200, 200, 80)) %>%
   hot_col(1:2, renderer = "html") %>%
   hot_col(1:3, renderer = htmlwidgets::JS("safeHtmlRenderer")) %>%
@@ -125,20 +126,20 @@ rhandsontable(DF, allowedTags = "<em><b><strong><a><big>",
       return td;
     }")
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_context_menu(allowRowEdit = FALSE, allowColEdit = FALSE)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
-rhandsontable(MAT) %>%
+rhandsontable(MAT, width = 550, height = 300) %>%
   hot_context_menu(
     customOpts = list(
       csv = list(name = "Download to CSV",
@@ -156,7 +157,7 @@ rhandsontable(MAT) %>%
                          document.body.removeChild(link);
                        }"))))
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10,
                 bool = TRUE,
                 big = LETTERS[1:10],
@@ -164,7 +165,7 @@ DF = data.frame(val = 1:10,
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF, search = TRUE) %>%
+rhandsontable(DF, search = TRUE, width = 550, height = 300) %>%
   hot_context_menu(
     customOpts = list(
       search = list(name = "Search",
@@ -176,41 +177,42 @@ rhandsontable(DF, search = TRUE) %>%
                          this.render();
                        }"))))
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(int = 1:10, float = rnorm(10), cur = rnorm(10) * 1E5,
                 lrg = rnorm(10) * 1E8, pct = rnorm(10))
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_col("float", format = "0.0") %>%
   hot_col("cur", format = "$0,0.00") %>%
   hot_col("lrg", format = "0a") %>%
   hot_col("pct", format = "0%")
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF, readOnly = TRUE) %>%
+rhandsontable(DF, readOnly = TRUE, width = 550, height = 300) %>%
   hot_col("val", readOnly = FALSE)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_cols(columnSorting = TRUE)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+# click on a cell to see the highlighting
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
 ## ----fig.height = 6, fig.width = 6---------------------------------------
@@ -221,36 +223,35 @@ rhandsontable(MAT, width = 600, height = 600) %>%
   hot_cols(colWidths = 100) %>%
   hot_rows(rowHeights = 50)
 
-## ----fig.height = 3------------------------------------------------------
-MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
-                                                   letters[1:5]))
+## ------------------------------------------------------------------------
+MAT = matrix(rnorm(26 * 26), nrow = 26, dimnames = list(LETTERS, letters))
 
-rhandsontable(MAT) %>%
+# scroll through the table to see the fixed row and column
+rhandsontable(MAT, width = 550, height = 300) %>%
   hot_cols(fixedColumnsLeft = 1) %>%
   hot_rows(fixedRowsTop = 1)
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_cell(1, 1, "Test comment")
 
-## ----fig.height = 5, results = "hide"------------------------------------
+## ------------------------------------------------------------------------
+MAT_comments = matrix(ncol = ncol(DF), nrow = nrow(DF))
+MAT_comments[1, 1] = "Test comment"
+MAT_comments[2, 2] = "Another test comment"
+
+rhandsontable(DF, comments = MAT_comments, width = 550, height = 300)
+
+## ------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
-rhandsontable(MAT) %>%
-  hot_table(groups = list(list(cols = c(0, 1)),
-                          list(rows = c(0, 1))))
-
-## ----fig.height = 3------------------------------------------------------
-MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
-                                                   letters[1:5]))
-
-rhandsontable(MAT) %>%
+rhandsontable(MAT, width = 550, height = 300) %>%
   hot_table(customBorders = list(list(
     range = list(from = list(row = 1, col = 1),
                  to = list(row = 2, col = 2)),
@@ -259,31 +260,31 @@ rhandsontable(MAT) %>%
     bottom = list(width = 2, color = "red"),
     right = list(width = 2, color = "red"))))
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
-rhandsontable(MAT * 10) %>%
+rhandsontable(MAT * 10, width = 550, height = 300) %>%
   hot_validate_numeric(col = 1, min = -50, max = 50, exclude = 40)
 
-rhandsontable(MAT * 10) %>%
+rhandsontable(MAT * 10, width = 550, height = 300) %>%
   hot_validate_numeric(col = 1, choices = c(10, 20, 40))
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF) %>%
+rhandsontable(DF, width = 550, height = 300) %>%
   hot_validate_character(col = "big", choices = LETTERS[1:10])
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
 # try to update any cell to 0
-rhandsontable(MAT * 10) %>%
+rhandsontable(MAT * 10, width = 550, height = 300) %>%
   hot_cols(validator = "
            function (value, callback) {
             setTimeout(function(){
@@ -292,12 +293,12 @@ rhandsontable(MAT * 10) %>%
            }",
            allowInvalid = FALSE)
 
-## ----fig.height = 3, fig.width = 8---------------------------------------
+## ---- fig.width = 8------------------------------------------------------
 MAT = matrix(runif(100, -1, 1), nrow = 10,
              dimnames = list(LETTERS[1:10], LETTERS[1:10]))
 diag(MAT) = 1
 MAT[upper.tri(MAT)] = MAT[lower.tri(MAT)]
-rhandsontable(MAT, readOnly = TRUE) %>%
+rhandsontable(MAT, readOnly = TRUE, width = 750, height = 300) %>%
   hot_cols(renderer = "
            function (instance, td, row, col, prop, value, cellProperties) {
              Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -313,10 +314,10 @@ rhandsontable(MAT, readOnly = TRUE) %>%
              }
            }")
 
-## ----fig.height = 3------------------------------------------------------
+## ------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
-rhandsontable(MAT) %>%
+rhandsontable(MAT, width = 550, height = 300) %>%
   hot_heatmap()
 
