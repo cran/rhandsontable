@@ -188,6 +188,14 @@ rhandsontable(DF, width = 550, height = 300) %>%
   hot_col("pct", format = "0%")
 
 ## ------------------------------------------------------------------------
+DF = data.frame(dollar = rnorm(10), euro = rnorm(10), yen = rnorm(10))
+
+rhandsontable(DF * 1000, width = 550, height = 300) %>%
+  hot_col("dollar", format = "$0,000.00", language = "en") %>%
+  hot_col("euro", format = "0,000.00 $", language = "de") %>%
+  hot_col("yen", format = "$0,000.00", language = "ja")
+
+## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -222,6 +230,15 @@ MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
 rhandsontable(MAT, width = 600, height = 600) %>%
   hot_cols(colWidths = 100) %>%
   hot_rows(rowHeights = 50)
+
+## ----fig.height = 6, fig.width = 6---------------------------------------
+rhandsontable(mtcars, rowHeaderWidth = 200)
+
+## ----fig.height = 6, fig.width = 6---------------------------------------
+MAT = matrix(rnorm(30), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:3]))
+
+rhandsontable(MAT, width = 600, height = 300, stretchH = "all")
 
 ## ------------------------------------------------------------------------
 MAT = matrix(rnorm(26 * 26), nrow = 26, dimnames = list(LETTERS, letters))

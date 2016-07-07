@@ -6,8 +6,8 @@
 #' @name rhandsontable-package
 #' @docType package
 #' @import htmlwidgets jsonlite
+#' @importFrom utils modifyList capture.output
 #' @importFrom methods as
-#' @importFrom utils modifyList
 NULL
 
 #' rhandsontable exported operators

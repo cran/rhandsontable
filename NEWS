@@ -1,3 +1,18 @@
+rhandsontable 0.3.2
+-------------------------
+
+* Updates to handsontable 0.25.1 (see https://github.com/handsontable/handsontable/releases).
+
+* Added Edit a Data Frame addin for RStudio
+
+* Added a language parameter to hot_col that supports changing the column formatting locale
+
+* Added rowHeaderWidth to hot_table to allow specifying the rowHeader column width
+
+* Added digits to rhandsontable, which is passed to jsonlite::toJSON
+
+* Fixed shiny bug with mixed numeric and character column names (#77)
+
 rhandsontable 0.3.1
 -------------------------
 

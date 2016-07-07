@@ -7,7 +7,7 @@
 hot_col(hot, col, type = NULL, format = NULL, source = NULL,
   strict = NULL, readOnly = NULL, validator = NULL, allowInvalid = NULL,
   halign = NULL, valign = NULL, renderer = NULL, copyable = NULL,
-  dateFormat = NULL, default = NULL, ...)
+  dateFormat = NULL, default = NULL, language = NULL, ...)
 }
 \arguments{
 \item{hot}{rhandsontable object}
@@ -54,6 +54,9 @@ Ctrl + C}
 {https://github.com/moment/moment}{Moment.js} for details.}
 
 \item{default}{default column value for new rows (NA if not specified; shiny only)}
+
+\item{language}{locale passed to \href{http://numeraljs.com}{Numeral.js};
+default is 'en'.}
 
 \item{...}{passed to handsontable}
 }
