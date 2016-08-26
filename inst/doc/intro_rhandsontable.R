@@ -191,9 +191,9 @@ rhandsontable(DF, width = 550, height = 300) %>%
 DF = data.frame(dollar = rnorm(10), euro = rnorm(10), yen = rnorm(10))
 
 rhandsontable(DF * 1000, width = 550, height = 300) %>%
-  hot_col("dollar", format = "$0,000.00", language = "en") %>%
-  hot_col("euro", format = "0,000.00 $", language = "de") %>%
-  hot_col("yen", format = "$0,000.00", language = "ja")
+  hot_col("dollar", format = "$0,000.00", language = "en-US") %>%
+  hot_col("euro", format = "0,000.00 $", language = "de-DE") %>%
+  hot_col("yen", format = "$0,000.00", language = "ja-JP")
 
 ## ------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
@@ -337,4 +337,9 @@ MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
 
 rhandsontable(MAT, width = 550, height = 300) %>%
   hot_heatmap()
+
+## ------------------------------------------------------------------------
+MAT = matrix(rnorm(10000 * 100), nrow = 100, dimnames= list(1:100, 1:10000))
+
+rhandsontable(MAT, width = 550, height = 550)
 

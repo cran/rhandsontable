@@ -1,7 +1,7 @@
 Package: rhandsontable
 Type: Package
 Title: Interface to the 'Handsontable.js' Library
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: c(person("Jonathan", "Owen", email = "jonathanro@gmail.com",
                     role = c("aut", "cre", "cph")),
              person("Jeff", "Allen", role = c("ctb")),
@@ -11,12 +11,15 @@ Authors@R: c(person("Jonathan", "Owen", email = "jonathanro@gmail.com",
              person("Warpechowski", "Marcin", role = c("ctb", "cph"), comment = "Handsontable.js library"),
              person("Handsoncode sp. z o.o.", role = c("ctb", "cph"), comment = "Handsontable.js library"),
              person("Aisch", "Gregor", role = c("ctb", "cph"), comment = "Chroma.js library"),
+             person("F<c3><b6>retagsplatsen", role = c("ctb", "cph"), comment = "Numbro.js library"),
+             person("Draper", "Adam", role = c("ctb", "cph"), comment = "Numeral.js library"),
              person("Wood", "Tim", role = c("ctb", "cph"), comment = "Moment.js library"),
              person("Chernev", "Iskren", role = c("ctb", "cph"), comment = "Moment.js library"),
              person("Moment.js contributors", role = c("ctb", "cph"), comment = "Moment.js library"),
              person("Bushell", "David", role = c("ctb", "cph"), comment = "Pikaday.js library"),
              person("jQuery Foundation", role = c("ctb", "cph"), comment = "jQuery.js library"),
              person("Splunk Inc", role = c("ctb", "cph"), comment = "Sparkline.js library"),
+             person("Russell", "Kent", role = c("ctb", "cph"), comment = "Sparkline.js library"),
              person("Rohan", "Jon", role = c("ctb", "cph"), comment = "ZeroClipboard library"),
              person("Greene", "James", role = c("ctb", "cph"), comment = "ZeroClipboard library"))
 Maintainer: Jonathan Owen <jonathanro@gmail.com>
@@ -31,7 +34,7 @@ Suggests: knitr, rmarkdown, shiny (>= 0.13), miniUI (>= 0.1.1),
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2016-07-06 23:33:07 UTC; rstudio
+Packaged: 2016-08-26 17:46:23 UTC; jonathan
 Author: Jonathan Owen [aut, cre, cph],
   Jeff Allen [ctb],
   Yihui Xie [ctb],
@@ -39,13 +42,16 @@ Author: Jonathan Owen [aut, cre, cph],
   Warpechowski Marcin [ctb, cph] (Handsontable.js library),
   Handsoncode sp. z o.o. [ctb, cph] (Handsontable.js library),
   Aisch Gregor [ctb, cph] (Chroma.js library),
+  F<c3><b6>retagsplatsen [ctb, cph] (Numbro.js library),
+  Draper Adam [ctb, cph] (Numeral.js library),
   Wood Tim [ctb, cph] (Moment.js library),
   Chernev Iskren [ctb, cph] (Moment.js library),
   Moment.js contributors [ctb, cph] (Moment.js library),
   Bushell David [ctb, cph] (Pikaday.js library),
   jQuery Foundation [ctb, cph] (jQuery.js library),
   Splunk Inc [ctb, cph] (Sparkline.js library),
+  Russell Kent [ctb, cph] (Sparkline.js library),
   Rohan Jon [ctb, cph] (ZeroClipboard library),
   Greene James [ctb, cph] (ZeroClipboard library)
 Repository: CRAN
-Date/Publication: 2016-07-07 07:30:42
+Date/Publication: 2016-08-26 20:35:49
