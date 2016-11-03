@@ -132,6 +132,42 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
+col_highlight = 2
+row_highlight = c(5, 7)
+
+rhandsontable(DF, col_highlight = col_highlight, 
+              row_highlight = row_highlight,
+              width = 550, height = 300) %>%
+  hot_cols(renderer = "
+    function(instance, td, row, col, prop, value, cellProperties) {
+      Handsontable.TextCell.renderer.apply(this, arguments);
+      
+      tbl = this.HTMLWidgets.widgets[0]
+
+      hcols = tbl.params.col_highlight
+      hcols = hcols instanceof Array ? hcols : [hcols] 
+      hrows = tbl.params.row_highlight
+      hrows = hrows instanceof Array ? hrows : [hrows] 
+
+      if (hcols.includes(col) && hrows.includes(row)) {
+        td.style.background = 'red';
+      }
+      else if (hcols.includes(col)) {
+        td.style.background = 'lightgreen';
+      }
+      else if (hrows.includes(row)) {
+        td.style.background = 'pink';
+      }
+      
+      return td;
+  }")
+
+## ------------------------------------------------------------------------
+DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = "days", length.out = 10),
+                stringsAsFactors = FALSE)
+
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_context_menu(allowRowEdit = FALSE, allowColEdit = FALSE)
 
@@ -145,12 +181,12 @@ rhandsontable(MAT, width = 550, height = 300) %>%
       csv = list(name = "Download to CSV",
                     callback = htmlwidgets::JS(
                       "function (key, options) {
-                         var csv = csvString(instance);
+                         var csv = csvString(this);
 
                          var link = document.createElement('a');
                          link.setAttribute('href', 'data:text/plain;charset=utf-8,' +
                            encodeURIComponent(csv));
-                         link.setAttribute('download', filename);
+                         link.setAttribute('download', 'data.csv');
 
                          document.body.appendChild(link);
                          link.click();

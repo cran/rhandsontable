@@ -6,7 +6,7 @@
 \usage{
 rhandsontable(data, colHeaders, rowHeaders, comments = NULL,
   useTypes = TRUE, readOnly = NULL, selectCallback = FALSE,
-  width = NULL, height = NULL, digits = 4, ...)
+  width = NULL, height = NULL, digits = 4, debug = NULL, ...)
 }
 \arguments{
 \item{data}{a \code{data.table}, \code{data.frame} or \code{matrix}}
@@ -35,7 +35,9 @@ This can be used with shiny to tie updates to a selected table cell.}
 
 \item{digits}{numeric passed to \code{jsonlite::toJSON}}
 
-\item{...}{passed to hot_table}
+\item{debug}{numeric Javascript log level}
+
+\item{...}{passed to \code{hot_table} and to the \code{params} property of the widget}
 }
 \description{
 Create a \href{http://handsontable.com}{Handsontable.js} widget.

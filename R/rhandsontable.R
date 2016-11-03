@@ -19,7 +19,8 @@
 #' @param width numeric table width
 #' @param height numeric table height
 #' @param digits numeric passed to \code{jsonlite::toJSON}
-#' @param ... passed to hot_table
+#' @param debug numeric Javascript log level
+#' @param ... passed to \code{hot_table} and to the \code{params} property of the widget
 #' @examples
 #' library(rhandsontable)
 #' DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
@@ -33,7 +34,8 @@
 rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
                           useTypes = TRUE, readOnly = NULL,
                           selectCallback = FALSE,
-                          width = NULL, height = NULL, digits = 4, ...) {
+                          width = NULL, height = NULL, digits = 4,
+                          debug = NULL, ...) {
   rColHeaders = colnames(data)
   rRowHeaders = rownames(data)
 
@@ -118,7 +120,8 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
     rowHeaders = rowHeaders,
     columns = cols,
     width = width,
-    height = height
+    height = height,
+    debug = ifelse(is.null(debug) || is.na(debug) || !is.numeric(debug), 0, debug)
   )
 
   # create widget
