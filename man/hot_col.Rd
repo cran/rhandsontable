@@ -21,7 +21,7 @@ and handsontable (not implemented yet)}
 \item{format}{characer specifying column format. See Cell Types at
 \href{http://handsontable.com}{Handsontable.js} for the formatting
 options for each data type. Numeric columns are formatted using
-\href{http://numeraljs.com}{Numeral.js}.}
+\href{http://numbrojs.com}{Numbro.js}.}
 
 \item{source}{a vector of choices for select, dropdown and autocomplete
 column types}
@@ -78,4 +78,3 @@ rhandsontable(DF, rowHeaders = NULL) \%>\%
 \seealso{
 \code{\link{hot_cols}}, \code{\link{hot_rows}}, \code{\link{hot_cell}}
 }
-

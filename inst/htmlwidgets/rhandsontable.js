@@ -68,6 +68,14 @@ HTMLWidgets.widget({
 
       instance.hot.params = x;
       instance.hot.updateSettings(x);
+      
+      var searchField = document.getElementById('searchField');
+      if (typeof(searchField) != 'undefined' && searchField != null) {
+        Handsontable.dom.addEvent(searchField, 'keyup', function (event) {
+          var queryResult = instance.hot.search.query(this.value);
+          instance.hot.render();
+        });
+      }
     }
   },
 
@@ -109,7 +117,7 @@ HTMLWidgets.widget({
       }
 
       if (HTMLWidgets.shinyMode) {
-        if (changes && changes[0][2] !== null && changes[0][3] !== null) {
+        if (changes && (changes[0][2] !== null || changes[0][3] !== null)) {
           if (this.sortIndex && this.sortIndex.length !== 0) {
             c = [this.sortIndex[changes[0][0]][0], changes[0].slice(1, 1 + 3)];
           } else {
@@ -133,11 +141,11 @@ HTMLWidgets.widget({
               console.log("afterChange: Shiny.onInputChange: " + this.rootElement.id);
             }
           }
-          Shiny.onInputChange(this.rootElement.id, {
-            data: this.getData(),
-            changes: { event: "afterChange", changes: null },
-            params: this.params
-          });
+          //Shiny.onInputChange(this.rootElement.id, {
+          //  data: this.getData(),
+          //  changes: { event: "afterChange", changes: null },
+          //  params: this.params
+          //});
         }
       }
 
@@ -173,10 +181,6 @@ HTMLWidgets.widget({
     x.afterSetCellMeta = function(r, c, key, val) {
 
       if (HTMLWidgets.shinyMode && key === "comment") {
-        if (this.sortIndex && this.sortIndex.length !== 0) {
-          r = this.sortIndex[r][0];
-        }
-
         if (this.params && this.params.debug) {
           if (this.params.debug > 0) {
             console.log("afterSetCellMeta: Shiny.onInputChange: " + this.rootElement.id);
@@ -223,8 +227,10 @@ HTMLWidgets.widget({
 
       if (HTMLWidgets.shinyMode) {
 
-        for(var i = 0, colCount = this.countCols(); i < colCount ; i++) {
-          this.setDataAtCell(ind, i, this.params.columns[i].default);
+        if (this.params && this.params.columns) {
+          for(var i = 0, colCount = this.countCols(); i < colCount ; i++) {
+            this.setDataAtCell(ind, i, this.params.columns[i].default);
+          }
         }
 
         if (this.params && this.params.debug) {
@@ -323,21 +329,24 @@ function toArray(input) {
 }
 
 // csv logic adapted from https://github.com/juantascon/jquery-handsontable-csv
-function csvString(instance) {
+function csvString(instance,sep=",",dec=".") {
 
   var headers = instance.getColHeader();
 
-  var csv = headers.join(",") + "\n";
+  var csv = headers.join(sep) + "\n";
 
   for (var i = 0; i < instance.countRows(); i++) {
       var row = [];
       for (var h in headers) {
           var col = instance.propToCol(h);
           var value = instance.getDataAtRowProp(i, col);
+          if ( !isNaN(value) ) {
+            value = value.toString().replace(".",dec)
+          }
           row.push(value);
       }
 
-      csv += row.join(",");
+      csv += row.join(sep);
       csv += "\n";
   }
 
@@ -345,17 +354,12 @@ function csvString(instance) {
 }
 
 function customRenderer(instance, TD, row, col, prop, value, cellProperties) {
-  if (value === 'NA') {
-    value = '';
-    Handsontable.renderers.getRenderer('text')(instance, TD, row, col, prop, value, cellProperties);
-  } else {
     if (['date', 'handsontable', 'dropdown'].indexOf(cellProperties.type) > -1) {
       type = 'autocomplete';
     } else {
       type = cellProperties.type;
     }
     Handsontable.renderers.getRenderer(type)(instance, TD, row, col, prop, value, cellProperties);
-  }
 }
 
 function renderSparkline(instance, td, row, col, prop, value, cellProperties) {

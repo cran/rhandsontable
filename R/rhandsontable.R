@@ -20,6 +20,9 @@
 #' @param height numeric table height
 #' @param digits numeric passed to \code{jsonlite::toJSON}
 #' @param debug numeric Javascript log level
+#' @param search logical specifying if the data can be searched (see
+#'   \url{file:///home/jonathan/Documents/git/rhandsontable/docs/index.html#customizing}
+#'   and Shiny example in inst/examples/rhandsontable_search)
 #' @param ... passed to \code{hot_table} and to the \code{params} property of the widget
 #' @examples
 #' library(rhandsontable)
@@ -35,9 +38,12 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
                           useTypes = TRUE, readOnly = NULL,
                           selectCallback = FALSE,
                           width = NULL, height = NULL, digits = 4,
-                          debug = NULL, ...) {
+                          debug = NULL, search = FALSE, ...) {
   rColHeaders = colnames(data)
-  rRowHeaders = rownames(data)
+  if (.row_names_info(data) > 0L)
+    rRowHeaders = rownames(data)
+  else
+    rRowHeaders = NULL
 
   if (missing(colHeaders))
     colHeaders = colnames(data)
@@ -50,6 +56,14 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
   } else {
     rColClasses = lapply(data, class)
     rColClasses[grepl("factor", rColClasses)] = "factor"
+  }
+
+  if ("tbl_df" %in% rClass) {
+    # temp fix for tibbles
+    data = as.data.frame(data)
+  } else if ("data.table" %in% rClass) {
+    # temp fix for data.table with S3 class
+    data = as.data.frame(data)
   }
 
   if (!useTypes) {
@@ -75,16 +89,9 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
     cols = lapply(seq_along(col_typs), function(i) {
       type = col_typs[i]
       if (type == "factor") {
-#         data_fact = data.frame(level = levels(data[, i]),
-#                                label = labels(data[, i]))
         res = list(type = "dropdown",
                    source = levels(data[, i]),
                    allowInvalid = FALSE
-#                    handsontable = list(
-#                      colHeaders = FALSE, #c("Label", "Level"),
-#                      data = levels(data[, i]) #jsonlite::toJSON(data_fact, na = "string",
-#                                               #rownames = FALSE)
-#                    )
         )
       } else if (type == "numeric") {
         res = list(type = "numeric",
@@ -107,7 +114,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
   }
 
   x = list(
-    data = jsonlite::toJSON(data, na = "string", rownames = FALSE,
+    data = jsonlite::toJSON(data, na = "null", rownames = FALSE,
                             digits = digits),
     rClass = rClass,
     rColClasses = rColClasses,
@@ -121,7 +128,8 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
     columns = cols,
     width = width,
     height = height,
-    debug = ifelse(is.null(debug) || is.na(debug) || !is.numeric(debug), 0, debug)
+    debug = ifelse(is.null(debug) || is.na(debug) || !is.numeric(debug), 0, debug),
+    search = search
   )
 
   # create widget
@@ -138,7 +146,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
     )
   )
 
-  if (!is.null(readOnly)) {
+  if (!is.null(readOnly) && !is.logical(hot$x$colHeaders)) {
     for (x in hot$x$colHeaders)
       hot = hot %>% hot_col(x, readOnly = readOnly)
   }
@@ -340,8 +348,8 @@ hot_context_menu = function(hot, allowRowEdit = TRUE, allowColEdit = TRUE,
 #'  The sorting will be done when a user click on column name
 #' @param manualColumnMove logical enabling column drag-and-drop reordering
 #' @param manualColumnResize logical enabline column width resizing
-#' @param fixedColumnsLeft a numeric vector indicating which columns should be
-#'  frozen on the left
+#' @param fixedColumnsLeft a scalar indicating the number of columns to
+#'  freeze on the left
 #' @param ... passed to hot_col
 #' @examples
 #' library(rhandsontable)
@@ -383,7 +391,7 @@ hot_cols = function(hot, colWidths = NULL, columnSorting = NULL,
 #' @param format characer specifying column format. See Cell Types at
 #'  \href{http://handsontable.com}{Handsontable.js} for the formatting
 #'  options for each data type. Numeric columns are formatted using
-#'  \href{http://numeraljs.com}{Numeral.js}.
+#'  \href{http://numbrojs.com}{Numbro.js}.
 #' @param source a vector of choices for select, dropdown and autocomplete
 #'  column types
 #' @param strict logical specifying whether values not in the \code{source}
@@ -473,8 +481,8 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
 #'
 #' @param hot rhandsontable object
 #' @param rowHeights a scalar or numeric vector of row heights
-#' @param fixedRowsTop a numeric vector indicating which rows should be
-#'  frozen on the top
+#' @param fixedRowsTop a scaler indicating the number of rows to
+#'  freeze on the top
 #' @examples
 #' library(rhandsontable)
 #' MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
@@ -512,7 +520,7 @@ hot_rows = function(hot, rowHeights = NULL, fixedRowsTop = NULL) {
 #' @seealso \code{\link{hot_cols}}, \code{\link{hot_rows}}
 #' @export
 hot_cell = function(hot, row, col, comment = NULL) {
-  cell = list(row = row - 1, col = col - 1, comment = comment)
+  cell = list(row = row - 1, col = col - 1, comment = list(value = comment))
 
   hot$x$cell = c(hot$x$cell, list(cell))
 
