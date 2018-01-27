@@ -68,7 +68,7 @@ HTMLWidgets.widget({
 
       instance.hot.params = x;
       instance.hot.updateSettings(x);
-      
+
       var searchField = document.getElementById('searchField');
       if (typeof(searchField) != 'undefined' && searchField != null) {
         Handsontable.dom.addEvent(searchField, 'keyup', function (event) {
@@ -141,11 +141,12 @@ HTMLWidgets.widget({
               console.log("afterChange: Shiny.onInputChange: " + this.rootElement.id);
             }
           }
-          //Shiny.onInputChange(this.rootElement.id, {
-          //  data: this.getData(),
-          //  changes: { event: "afterChange", changes: null },
-          //  params: this.params
-          //});
+          // push input change to shiny so input$hot and output$hot are in sync (see #137)
+          Shiny.onInputChange(this.rootElement.id, {
+            data: this.getData(),
+            changes: { event: "afterChange", changes: null },
+            params: this.params
+          });
         }
       }
 
@@ -329,7 +330,7 @@ function toArray(input) {
 }
 
 // csv logic adapted from https://github.com/juantascon/jquery-handsontable-csv
-function csvString(instance,sep=",",dec=".") {
+function csvString(instance, sep, dec) {
 
   var headers = instance.getColHeader();
 
@@ -341,7 +342,7 @@ function csvString(instance,sep=",",dec=".") {
           var col = instance.propToCol(h);
           var value = instance.getDataAtRowProp(i, col);
           if ( !isNaN(value) ) {
-            value = value.toString().replace(".",dec)
+            value = value.toString().replace(".", dec);
           }
           row.push(value);
       }
