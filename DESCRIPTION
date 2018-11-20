@@ -1,7 +1,7 @@
 Package: rhandsontable
 Type: Package
 Title: Interface to the 'Handsontable.js' Library
-Version: 0.3.6
+Version: 0.3.7
 Authors@R: c(
   person("Jonathan", "Owen", email = "jonathanro@gmail.com",
          role = c("aut", "cre", "cph")),
@@ -34,10 +34,10 @@ Imports: jsonlite, htmlwidgets (>= 0.3.3), magrittr, methods
 Suggests: knitr, rmarkdown, shiny (>= 0.13), miniUI (>= 0.1.1),
         rstudioapi (>= 0.6), htmltools
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2018-01-27 00:11:20 UTC; jonathan
+Packaged: 2018-11-20 00:18:40 UTC; jonathan
 Author: Jonathan Owen [aut, cre, cph],
   Jeff Allen [ctb],
   Yihui Xie [ctb],
@@ -58,4 +58,4 @@ Author: Jonathan Owen [aut, cre, cph],
   Rohan Jon [ctb, cph] (ZeroClipboard library),
   Greene James [ctb, cph] (ZeroClipboard library)
 Repository: CRAN
-Date/Publication: 2018-01-27 05:53:10 UTC
+Date/Publication: 2018-11-20 05:50:03 UTC

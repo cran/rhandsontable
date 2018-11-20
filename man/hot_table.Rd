@@ -6,7 +6,8 @@
 \usage{
 hot_table(hot, contextMenu = TRUE, stretchH = "none",
   customBorders = NULL, highlightRow = NULL, highlightCol = NULL,
-  enableComments = FALSE, overflow = NULL, rowHeaderWidth = NULL, ...)
+  enableComments = FALSE, overflow = NULL, rowHeaderWidth = NULL,
+  ...)
 }
 \arguments{
 \item{hot}{rhandsontable object}
@@ -14,10 +15,9 @@ hot_table(hot, contextMenu = TRUE, stretchH = "none",
 \item{contextMenu}{logical enabling the right-click menu}
 
 \item{stretchH}{character describing column stretching. Options are 'all', 'right',
-and 'none'. See \href{http://docs.handsontable.com/0.16.1/demo-stretching.html}{Column stretching} for details.}
+and 'none'}
 
-\item{customBorders}{json object. See
-\href{http://handsontable.com/demo/custom_borders.html}{Custom borders} for details.}
+\item{customBorders}{json object}
 
 \item{highlightRow}{logical enabling row highlighting for the selected
 cell}
