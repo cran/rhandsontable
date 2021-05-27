@@ -1,11 +1,11 @@
-## ----echo = FALSE--------------------------------------------------------
+## ----echo = FALSE, warning = FALSE--------------------------------------------
 library(rhandsontable)
 library(knitr)
 
 opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE,
               fig.width=7, fig.height=3)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(integer = 1:10,
                    numeric = rnorm(10),
                    logical = rep(TRUE, 10), 
@@ -20,7 +20,7 @@ DF = data.frame(integer = 1:10,
 rhandsontable(DF, width = 600, height = 300) %>%
   hot_col("factor_allow", allowInvalid = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF_na = data.frame(integer = c(NA, 2:10), 
                    logical = c(NA, rep(TRUE, 9)), 
                    character = c(NA, LETTERS[1:9]),
@@ -35,7 +35,7 @@ DF_na$date_ch = c(NA, as.character(seq(from = Sys.Date(), by = "days",
 
 rhandsontable(DF_na, width = 550, height = 300)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -47,7 +47,7 @@ rhandsontable(DF, rowHeaders = NULL, width = 550, height = 300) %>%
   hot_col(col = "small", type = "autocomplete", source = letters,
           strict = FALSE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -56,7 +56,7 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_col("small", "password")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -72,7 +72,7 @@ DF$chart = c(sapply(1:5,
 rhandsontable(DF, rowHeaders = NULL, width = 550, height = 300) %>%
   hot_col("chart", renderer = htmlwidgets::JS("renderSparkline"))
 
-## ----fig.height = 5, fig.width = 8---------------------------------------
+## ----fig.height = 5, fig.width = 8--------------------------------------------
 DF = data.frame(
   title = c(
     "<a href='http://www.amazon.com/Professional-JavaScript-Developers-Nicholas-Zakas/dp/1118026691'>Professional JavaScript for Web Developers</a>",
@@ -115,7 +115,7 @@ rhandsontable(DF, allowedTags = "<em><b><strong><a><big>",
           e.preventDefault(); // prevent selection quirk
         });
   
-        Handsontable.dsom.empty(td);
+        Handsontable.dom.empty(td);
         td.appendChild(img);
       }
       else {
@@ -126,7 +126,7 @@ rhandsontable(DF, allowedTags = "<em><b><strong><a><big>",
       return td;
     }")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -162,7 +162,7 @@ rhandsontable(DF, col_highlight = col_highlight,
       return td;
   }")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -171,7 +171,7 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_context_menu(allowRowEdit = FALSE, allowColEdit = FALSE)
 
-## ------------------------------------------------------------------------
+## ---- warning = FALSE---------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -193,7 +193,7 @@ rhandsontable(MAT, width = 550, height = 300) %>%
                          document.body.removeChild(link);
                        }"))))
 
-## ------------------------------------------------------------------------
+## ---- warning = FALSE---------------------------------------------------------
 DF = data.frame(val = 1:10,
                 bool = TRUE,
                 big = LETTERS[1:10],
@@ -213,7 +213,7 @@ rhandsontable(DF, search = TRUE, width = 550, height = 300) %>%
                          this.render();
                        }"))))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(int = 1:10, float = rnorm(10), cur = rnorm(10) * 1E5,
                 lrg = rnorm(10) * 1E8, pct = rnorm(10))
 
@@ -223,7 +223,7 @@ rhandsontable(DF, width = 550, height = 300) %>%
   hot_col("lrg", format = "0a") %>%
   hot_col("pct", format = "0%")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(dollar = rnorm(10), euro = rnorm(10), yen = rnorm(10))
 
 rhandsontable(DF * 1000, width = 550, height = 300) %>%
@@ -231,7 +231,7 @@ rhandsontable(DF * 1000, width = 550, height = 300) %>%
   hot_col("euro", format = "0,000.00 $", language = "de-DE") %>%
   hot_col("yen", format = "$0,000.00", language = "ja-JP")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -240,7 +240,7 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, readOnly = TRUE, width = 550, height = 300) %>%
   hot_col("val", readOnly = FALSE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -249,7 +249,7 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_cols(columnSorting = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -259,7 +259,7 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_table(highlightCol = TRUE, highlightRow = TRUE)
 
-## ----fig.height = 6, fig.width = 6---------------------------------------
+## ----fig.height = 6, fig.width = 6--------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -267,16 +267,16 @@ rhandsontable(MAT, width = 600, height = 600) %>%
   hot_cols(colWidths = 100) %>%
   hot_rows(rowHeights = 50)
 
-## ----fig.height = 6, fig.width = 6---------------------------------------
+## ----fig.height = 6, fig.width = 6--------------------------------------------
 rhandsontable(mtcars, rowHeaderWidth = 200)
 
-## ----fig.height = 6, fig.width = 6---------------------------------------
+## ----fig.height = 6, fig.width = 6--------------------------------------------
 MAT = matrix(rnorm(30), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:3]))
 
 rhandsontable(MAT, width = 600, height = 300, stretchH = "all")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT = matrix(rnorm(26 * 26), nrow = 26, dimnames = list(LETTERS, letters))
 
 # scroll through the table to see the fixed row and column
@@ -284,7 +284,7 @@ rhandsontable(MAT, width = 550, height = 300) %>%
   hot_cols(fixedColumnsLeft = 1) %>%
   hot_rows(fixedRowsTop = 1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -293,14 +293,14 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_cell(1, 1, "Test comment")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT_comments = matrix(ncol = ncol(DF), nrow = nrow(DF))
 MAT_comments[1, 1] = "Test comment"
 MAT_comments[2, 2] = "Another test comment"
 
 rhandsontable(DF, comments = MAT_comments, width = 550, height = 300)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -313,7 +313,7 @@ rhandsontable(MAT, width = 550, height = 300) %>%
     bottom = list(width = 2, color = "red"),
     right = list(width = 2, color = "red"))))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -323,7 +323,7 @@ rhandsontable(MAT * 10, width = 550, height = 300) %>%
 rhandsontable(MAT * 10, width = 550, height = 300) %>%
   hot_validate_numeric(col = 1, choices = c(10, 20, 40))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 small = letters[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
@@ -332,7 +332,7 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF, width = 550, height = 300) %>%
   hot_validate_character(col = "big", choices = LETTERS[1:10])
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -346,7 +346,7 @@ rhandsontable(MAT * 10, width = 550, height = 300) %>%
            }",
            allowInvalid = FALSE)
 
-## ---- fig.width = 8------------------------------------------------------
+## ---- fig.width = 8-----------------------------------------------------------
 MAT = matrix(runif(100, -1, 1), nrow = 10,
              dimnames = list(LETTERS[1:10], LETTERS[1:10]))
 diag(MAT) = 1
@@ -367,14 +367,14 @@ rhandsontable(MAT, readOnly = TRUE, width = 750, height = 300) %>%
              }
            }")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
 rhandsontable(MAT, width = 550, height = 300) %>%
   hot_heatmap()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 MAT = matrix(rnorm(10000 * 100), nrow = 100, dimnames= list(1:100, 1:10000))
 
 rhandsontable(MAT, width = 550, height = 550)

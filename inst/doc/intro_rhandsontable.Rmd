@@ -9,7 +9,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-```{r echo = FALSE}
+```{r echo = FALSE, warning = FALSE}
 library(rhandsontable)
 library(knitr)
 
@@ -19,14 +19,14 @@ opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE,
 
 ## Introduction
 
-  rhandsontable is a htmlwidget based on the [handsontable.js](https://www.handsontable.com) library.
-f
+**rhandsontable** is a htmlwidget based on the [handsontable.js](https://handsontable.com) library.
+
 > Handsontable is a data grid component with an Excel-like appearance. Built in JavaScript, it integrates with any data source with peak efficiency. It comes with powerful features like data validation, sorting, grouping, data binding, formula support or column ordering.
-([via](https://www.handsontable.com))
+([via](https://handsontable.com))
 
 ## Column Types
 
-The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/dbushell/Pikaday) library is used to specify Date values.
+The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/Pikaday/Pikaday) library is used to specify Date values.
 
 rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level` and `allowInvalid` set to `FALSE`.  To allow new levels, set `allowInvalid` to `TRUE` (using `hot_col`; it may also be desirable to set `strict` to `FALSE`).  When running in `shiny`, using `hot_to_r` will preserve custom factor ordering, and if new levels are allowed, they will be added to the end.
 
@@ -97,7 +97,7 @@ rhandsontable(DF, width = 550, height = 300) %>%
 
 ### Sparkline
 
-New in version 0.2, [sparkline.js](http://omnipotent.net/jquery.sparkline/) charts can be added to the table.  Thanks to the sparkline package and Ramnath Vaidyanathan for inspiration.
+New in version 0.2, [sparkline.js](https://omnipotent.net/jquery.sparkline/) charts can be added to the table.  Thanks to the sparkline package and Ramnath Vaidyanathan for inspiration.
 
 ```{r}
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
@@ -118,7 +118,7 @@ rhandsontable(DF, rowHeaders = NULL, width = 550, height = 300) %>%
 
 ### Custom Renderer
 
-It's also possible to define a custom column renderer function.  For example, it may be desirable to include html in a cell.  The example below mimics [Custom renderers](http://docs.handsontable.com/0.16.1/demo-custom-renderers.html).
+It's also possible to define a custom column renderer function.  For example, it may be desirable to include html in a cell.  The example below mimics [Custom renderers](https://handsontable.com/docs/1.16.0/demo-custom-renderers.html).
 
 ```{r fig.height = 5, fig.width = 8}
 DF = data.frame(
@@ -163,7 +163,7 @@ rhandsontable(DF, allowedTags = "<em><b><strong><a><big>",
           e.preventDefault(); // prevent selection quirk
         });
   
-        Handsontable.dsom.empty(td);
+        Handsontable.dom.empty(td);
         td.appendChild(img);
       }
       else {
@@ -255,7 +255,7 @@ The `customOpts` parameter of `hot_context_menu` can be used to add custom funct
 
 This example illustrates how to add an option to export the table to a csv file.
 
-```{r}
+```{r, warning = FALSE}
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -282,7 +282,7 @@ rhandsontable(MAT, width = 550, height = 300) %>%
 
 This example illustrates how to enable the search functionality in Handsontable.
 
-```{r}
+```{r, warning = FALSE}
 DF = data.frame(val = 1:10,
                 bool = TRUE,
                 big = LETTERS[1:10],
@@ -307,7 +307,7 @@ Future enhancements will look to expand export options.
 
 ## Numeric Formatting
 
-Numeric columns are formatted using the [numbro.js](http://numbrojs.com/) library.
+Numeric columns are formatted using the [numbro.js](https://numbrojs.com/) library.
 
 ```{r}
 DF = data.frame(int = 1:10, float = rnorm(10), cur = rnorm(10) * 1E5,
@@ -546,7 +546,7 @@ rhandsontable(MAT, readOnly = TRUE, width = 750, height = 300) %>%
            }")
 ```
 
-See [Custom Renderer using an R Parameter](#custom_renderer_using_r) for anotehr example.
+See [Custom Renderer using an R Parameter](#custom_renderer_using_r) for another example.
 
 ## Heatmap
 
@@ -580,32 +580,32 @@ This functionality is still evolving, so please don't hesitate to share suggesti
 
 The data grid will be editable by default and can be used as input to a `shiny` app.  A few `shiny` and `shinydashboard` example links are listed below.  Note that the shinyapps.io links may not work if the has hit the monthly usage limit.
 
-* [Output only](https://jrowen.shinyapps.io/rhandsontable_output)
+* **Output only**
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_output")
 ```
-* [Date file editor](https://jrowen.shinyapps.io/rhandsontable_datafile)
+* **Date file editor**
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_datafile")
 ```
-* [Calculation input](https://jrowen.shinyapps.io/rhandsontable_portfolio)
+* **Calculation input**
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_portfolio")
 ```
-* [Table callback linked to chart](https://jrowen.shinyapps.io/rhandsontable_corr)
+* **Table callback linked to chart**
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_corr")
 ```
-* [Multiple input tables](https://jrowen.shinyapps.io/rhandsontable_frontier)
+* **Multiple input tables**
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_frontier")
 ```
-* [A shinydashboard app](https://jrowen.shinyapps.io/rhandsontable_dash)
+* **A shinydashboard app**
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir="inst/examples/rhandsontable_dash")

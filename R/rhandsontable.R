@@ -1,8 +1,8 @@
 #' Handsontable widget
 #'
-#' Create a \href{http://handsontable.com}{Handsontable.js} widget.
+#' Create a \href{https://handsontable.com/}{Handsontable.js} widget.
 #'
-#' For full documentation on the package, visit \url{http://jrowen.github.io/rhandsontable/}
+#' For full documentation on the package, visit \url{https://jrowen.github.io/rhandsontable/}
 #' @param data a \code{data.table}, \code{data.frame} or \code{matrix}
 #' @param colHeaders a vector of column names. If missing \code{colnames}
 #'  will be used. Setting to \code{NULL} will omit.
@@ -21,7 +21,7 @@
 #' @param digits numeric passed to \code{jsonlite::toJSON}
 #' @param debug numeric Javascript log level
 #' @param search logical specifying if the data can be searched (see
-#'   \url{file:///home/jonathan/Documents/git/rhandsontable/docs/index.html#customizing}
+#'   \url{https://jrowen.github.io/rhandsontable/#Customizing}
 #'   and Shiny example in inst/examples/rhandsontable_search)
 #' @param ... passed to \code{hot_table} and to the \code{params} property of the widget
 #' @examples
@@ -168,7 +168,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
 #' Handsontable widget
 #'
 #' Configure table.  See
-#' \href{http://handsontable.com}{Handsontable.js} for details.
+#' \href{https://handsontable.com/}{Handsontable.js} for details.
 #'
 #' @param hot rhandsontable object
 #' @param contextMenu logical enabling the right-click menu
@@ -183,7 +183,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
 #' @param overflow character setting the css overflow behavior. Options are
 #'  auto (default), hidden and visible
 #' @param rowHeaderWidth numeric width (in px) for the rowHeader column
-#' @param ... passed to \href{http://handsontable.com}{Handsontable.js} constructor
+#' @param ... passed to \href{https://handsontable.com/}{Handsontable.js} constructor
 #' @examples
 #' library(rhandsontable)
 #' DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
@@ -259,7 +259,7 @@ hot_context_menu = function(hot, allowRowEdit = TRUE, allowColEdit = TRUE,
       !hot$x$contextMenu)
     warning("The context menu was disabled but will be re-enabled (hot_context_menu)")
 
-  if (!is.null(hot$x$colums) && allowColEdit)
+  if (!is.null(hot$x$columns) && allowColEdit)
     warning("Handsontable.js does not support column add/delete when column types ",
             "are defined.  Set useTypes = FALSE in rhandsontable to enable column ",
             "edits.")
@@ -385,9 +385,9 @@ hot_cols = function(hot, colWidths = NULL, columnSorting = NULL,
 #'  numeric, date, checkbox, select, dropdown, autocomplete, password,
 #'  and handsontable (not implemented yet)
 #' @param format characer specifying column format. See Cell Types at
-#'  \href{http://handsontable.com}{Handsontable.js} for the formatting
+#'  \href{https://handsontable.com/}{Handsontable.js} for the formatting
 #'  options for each data type. Numeric columns are formatted using
-#'  \href{http://numbrojs.com}{Numbro.js}.
+#'  \href{https://numbrojs.com}{Numbro.js}.
 #' @param source a vector of choices for select, dropdown and autocomplete
 #'  column types
 #' @param strict logical specifying whether values not in the \code{source}
@@ -409,7 +409,7 @@ hot_cols = function(hot, colWidths = NULL, columnSorting = NULL,
 #' @param dateFormat character defining the date format. See
 #'  \href{https://github.com/moment/moment}{Moment.js} for details.
 #' @param default default column value for new rows (NA if not specified; shiny only)
-#' @param language locale passed to \href{http://numbrojs.com}{Numbro.js};
+#' @param language locale passed to \href{https://numbrojs.com}{Numbro.js};
 #'  default is 'en-US'.
 #' @param ... passed to handsontable
 #' @examples
@@ -464,7 +464,7 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
 
     className = c(halign, valign)
     if (!is.null(className)) {
-      cols[[i]]$className = className
+      cols[[i]]$className = paste0(className, collapse = " ")
     }
   }
 
@@ -476,7 +476,7 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
 #'
 #' Configure row settings that pertain to the entire table.
 #' Note that hot_rows is not to be confused with \code{\link{hot_row}}. See
-#' \href{http://handsontable.com}{Handsontable.js} for details.
+#' \href{https://handsontable.com/}{Handsontable.js} for details.
 #'
 #' @param hot rhandsontable object
 #' @param rowHeights a scalar or numeric vector of row heights
@@ -502,7 +502,7 @@ hot_rows = function(hot, rowHeights = NULL, fixedRowsTop = NULL) {
 #'
 #' Configure properties of all cells in a given row(s).
 #' Note that hot_row is not to be confused with \code{\link{hot_rows}}.  See
-#' \href{http://handsontable.com}{Handsontable.js} for details.
+#' \href{https://handsontable.com/}{Handsontable.js} for details.
 #'
 #' @param hot rhandsontable object
 #' @param row numeric vector of row indexes
@@ -531,7 +531,7 @@ hot_row = function(hot, row, readOnly = NULL) {
 #' Handsontable widget
 #'
 #' Configure single cell.  See
-#' \href{http://handsontable.com}{Handsontable.js} for details.
+#' \href{https://handsontable.com/}{Handsontable.js} for details.
 #'
 #' @param hot rhandsontable object
 #' @param row numeric row index
@@ -737,7 +737,7 @@ renderer_heatmap = function(color_scale) {
   renderer = gsub("\n", "", "
       function (instance, td, row, col, prop, value, cellProperties) {
 
-        Handsontable.renderers.TextRenderer.apply(this, arguments);
+        Handsontable.renderers.NumericRenderer.apply(this, arguments);
         heatmapScale  = chroma.scale(['%s1', '%s2']);
 
         if (instance.heatmap[col]) {
@@ -792,5 +792,50 @@ renderRHandsontable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @seealso \code{\link{rHandsontableOutput}}
 #' @export
 hot_to_r = function(...) {
+  if (is.null(list(...)[[1]])) return(NULL)
   do.call(toR, ...)
+}
+
+
+
+#' Handsontable widget
+#'
+#' Set data inside a Handsontable instance without recreating the widget. Send the new values as a vector of rows, a vector of columns, and a vector of values. If different length vectors are supplied then the shorter ones are recycled to match the length of the longest.
+#'
+#' @param id The id of the table to interact with.
+#' @param row Integer vector of row indexes.
+#' @param col Integer vector the column indexes.
+#' @param val Vector of values to set at each row-col pair.
+#' @param session The session that is associated with your shiny server function. The table is only interactive when used in shiny so we only use set_data when the table is in shiny.
+#' @param zero_indexed Default FALSE. Set to TRUE if you are supplying row and col indexes that are already 0-based.
+#' @export
+set_data = function(id, row, col, val, session, zero_indexed=F) {
+  # make sure rows and cols are integers
+  row <- as.integer(row)
+  col <- as.integer(col)
+
+  # javacript is zero-based indexed while R is 1-based
+  # we assume the R user is using 1-based so we subtract 1 from rows and cols
+  # if the user provides positions that are 0-based then we skip this
+  if( !zero_indexed ){
+    row <- row - 1
+    col <- col - 1
+  }
+
+  # make sure the provided rows and cols are finite, non-negative values
+  stopifnot(exprs = { all(c(row,col) >= 0, is.finite(c(row, col))) } )
+
+  # use recycling to ensure equal length vectors
+  vec_length <- max(length(row), length(col), length(val))
+  row <- rep(row, length.out=vec_length)
+  col <- rep(col, length.out=vec_length)
+  val <- rep(val, length.out=vec_length)
+
+  # send the list of data out to the message handler
+  session$sendCustomMessage('handler_setDataAtCell',
+                            list('id' = id,
+                                 'size'= length(val),
+                                 'row' = row,
+                                 'col' = col,
+                                 'val' = val))
 }

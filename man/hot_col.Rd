@@ -4,11 +4,25 @@
 \alias{hot_col}
 \title{Handsontable widget}
 \usage{
-hot_col(hot, col, type = NULL, format = NULL, source = NULL,
-  strict = NULL, readOnly = NULL, validator = NULL,
-  allowInvalid = NULL, halign = NULL, valign = NULL,
-  renderer = NULL, copyable = NULL, dateFormat = NULL,
-  default = NULL, language = NULL, ...)
+hot_col(
+  hot,
+  col,
+  type = NULL,
+  format = NULL,
+  source = NULL,
+  strict = NULL,
+  readOnly = NULL,
+  validator = NULL,
+  allowInvalid = NULL,
+  halign = NULL,
+  valign = NULL,
+  renderer = NULL,
+  copyable = NULL,
+  dateFormat = NULL,
+  default = NULL,
+  language = NULL,
+  ...
+)
 }
 \arguments{
 \item{hot}{rhandsontable object}
@@ -20,9 +34,9 @@ numeric, date, checkbox, select, dropdown, autocomplete, password,
 and handsontable (not implemented yet)}
 
 \item{format}{characer specifying column format. See Cell Types at
-\href{http://handsontable.com}{Handsontable.js} for the formatting
+\href{https://handsontable.com/}{Handsontable.js} for the formatting
 options for each data type. Numeric columns are formatted using
-\href{http://numbrojs.com}{Numbro.js}.}
+\href{https://numbrojs.com}{Numbro.js}.}
 
 \item{source}{a vector of choices for select, dropdown and autocomplete
 column types}
@@ -56,7 +70,7 @@ Ctrl + C}
 
 \item{default}{default column value for new rows (NA if not specified; shiny only)}
 
-\item{language}{locale passed to \href{http://numbrojs.com}{Numbro.js};
+\item{language}{locale passed to \href{https://numbrojs.com}{Numbro.js};
 default is 'en-US'.}
 
 \item{...}{passed to handsontable}
